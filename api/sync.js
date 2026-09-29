@@ -8,7 +8,10 @@ import {
   send
 } from './_meta.js';
 
-const POST_LIMIT = Math.min(Math.max(Number(process.env.META_POST_LIMIT || 25), 5), 100);
+const CONTENT_LIMIT = Math.min(
+  Math.max(Number(process.env.META_POST_LIMIT || 100), 60),
+  120
+);
 
 async function getPageContext(userToken, pageId) {
   const result = await graph('me/accounts', userToken, {
@@ -29,18 +32,45 @@ async function getPageContext(userToken, pageId) {
   return page;
 }
 
+async function collectPages(path, token, params, maxItems, stopWhen) {
+  const out = [];
+  let after = null;
+
+  while (out.length < maxItems) {
+    const page = await graph(path, token, {
+      ...params,
+      limit: Math.min(50, maxItems - out.length),
+      ...(after ? { after } : {})
+    });
+
+    const rows = page.data || [];
+    out.push(...rows);
+
+    if (!rows.length || stopWhen?.(rows, out)) break;
+
+    const nextAfter = page.paging?.cursors?.after;
+    if (!nextAfter || nextAfter === after) break;
+    after = nextAfter;
+  }
+
+  return out.slice(0, maxItems);
+}
+
 async function getFacebookPosts(page, since, until) {
   const params = {
-    fields: 'id,message,created_time,permalink_url,full_picture',
-    limit: POST_LIMIT
+    fields: 'id,message,created_time,permalink_url,full_picture'
   };
   if (since) params.since = since;
   if (until) params.until = until;
 
-  const feed = await graph(`${page.id}/posts`, page.access_token, params);
-  const posts = feed.data || [];
+  const posts = await collectPages(
+    `${page.id}/posts`,
+    page.access_token,
+    params,
+    CONTENT_LIMIT
+  );
 
-  return pMapLimit(posts, 5, async (post) => {
+  return pMapLimit(posts, 7, async (post) => {
     const [engagement, insights] = await Promise.all([
       graph(post.id, page.access_token, {
         fields: 'id,message,created_time,permalink_url,full_picture,reactions.limit(0).summary(true),comments.limit(0).summary(true),shares'
@@ -87,7 +117,8 @@ async function getInstagramInsights(mediaId, userToken) {
   const attempts = [
     'views,reach,shares,saved,total_interactions',
     'reach,shares,saved,total_interactions',
-    'reach,total_interactions'
+    'reach,total_interactions',
+    'reach'
   ];
   for (const metric of attempts) {
     try {
@@ -105,19 +136,29 @@ async function getInstagram(page, userToken, since, until) {
     fields: 'id,username,name,followers_count,media_count'
   });
 
-  const media = await graph(`${igId}/media`, userToken, {
-    fields: 'id,caption,media_type,media_product_type,timestamp,permalink,thumbnail_url,media_url,like_count,comments_count',
-    limit: POST_LIMIT
-  });
+  const sinceTs = since ? new Date(since + 'T00:00:00Z').getTime() : -Infinity;
+  const untilTs = until ? new Date(until + 'T23:59:59.999Z').getTime() : Infinity;
 
-  const from = since ? new Date(since).getTime() : -Infinity;
-  const to = until ? new Date(until).getTime() + 86400000 - 1 : Infinity;
-  const filtered = (media.data || []).filter((item) => {
+  const media = await collectPages(
+    `${igId}/media`,
+    userToken,
+    {
+      fields: 'id,caption,media_type,media_product_type,timestamp,permalink,thumbnail_url,media_url,like_count,comments_count'
+    },
+    CONTENT_LIMIT,
+    (rows) => {
+      if (!Number.isFinite(sinceTs)) return false;
+      const oldest = rows[rows.length - 1]?.timestamp;
+      return oldest ? new Date(oldest).getTime() < sinceTs : false;
+    }
+  );
+
+  const filtered = media.filter((item) => {
     const ts = new Date(item.timestamp).getTime();
-    return ts >= from && ts <= to;
+    return ts >= sinceTs && ts <= untilTs;
   });
 
-  const posts = await pMapLimit(filtered, 5, async (item) => {
+  const posts = await pMapLimit(filtered, 7, async (item) => {
     const insights = await getInstagramInsights(item.id, userToken);
     const views = metricValue(insights.data, 'views');
     const reach = metricValue(insights.data, 'reach');
@@ -164,6 +205,38 @@ async function getInstagram(page, userToken, since, until) {
   };
 }
 
+function summarize(posts) {
+  const totals = posts.reduce((acc, post) => {
+    acc.views += safeInt(post.views);
+    acc.reach += safeInt(post.reach);
+    acc.engagements += safeInt(post.engagements);
+    acc.likes += safeInt(post.likes);
+    acc.comments += safeInt(post.comments);
+    acc.shares += safeInt(post.shares);
+    acc.saves += safeInt(post.saves);
+    acc.clicks += safeInt(post.clicks);
+    acc.posts += 1;
+    return acc;
+  }, {
+    views: 0,
+    reach: 0,
+    engagements: 0,
+    likes: 0,
+    comments: 0,
+    shares: 0,
+    saves: 0,
+    clicks: 0,
+    posts: 0
+  });
+
+  totals.engagementRate = totals.reach > 0
+    ? (totals.engagements / totals.reach) * 100
+    : 0;
+  totals.avgViews = totals.posts ? totals.views / totals.posts : 0;
+  totals.avgReach = totals.posts ? totals.reach / totals.posts : 0;
+  return totals;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') return send(res, 405, { error: 'Method not allowed' });
 
@@ -172,6 +245,7 @@ export default async function handler(req, res) {
     const pageId = req.query?.pageId;
     const since = req.query?.since || '';
     const until = req.query?.until || '';
+
     if (!pageId) return send(res, 400, { error: 'pageId is required' });
 
     const page = await getPageContext(userToken, pageId);
@@ -184,23 +258,35 @@ export default async function handler(req, res) {
       .filter((item) => !item.__error)
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
-    const totals = posts.reduce((acc, post) => {
-      acc.views += safeInt(post.views);
-      acc.reach += safeInt(post.reach);
-      acc.engagements += safeInt(post.engagements);
-      acc.likes += safeInt(post.likes);
-      acc.comments += safeInt(post.comments);
-      acc.shares += safeInt(post.shares);
-      acc.saves += safeInt(post.saves);
-      acc.clicks += safeInt(post.clicks);
-      return acc;
-    }, { views: 0, reach: 0, engagements: 0, likes: 0, comments: 0, shares: 0, saves: 0, clicks: 0 });
+    const totals = summarize(posts);
+    const platformTotals = {
+      facebook: summarize(posts.filter((p) => p.platform === 'facebook')),
+      instagram: summarize(posts.filter((p) => p.platform === 'instagram'))
+    };
 
-    totals.engagementRate = totals.reach > 0 ? (totals.engagements / totals.reach) * 100 : 0;
+    const typeTotals = {};
+    for (const post of posts) {
+      const type = post.mediaProductType === 'REELS'
+        ? 'REELS'
+        : (post.mediaType || 'POST');
+      if (!typeTotals[type]) typeTotals[type] = [];
+      typeTotals[type].push(post);
+    }
+
+    const contentTypes = Object.entries(typeTotals)
+      .map(([type, rows]) => ({ type, ...summarize(rows) }))
+      .sort((a, b) => b.views - a.views);
 
     return send(res, 200, {
       syncedAt: new Date().toISOString(),
       graphVersion: process.env.META_GRAPH_VERSION || 'v26.0',
+      coverage: {
+        perPlatformLimit: CONTENT_LIMIT,
+        requestedSince: since || null,
+        requestedUntil: until || null,
+        facebookLoaded: facebookPosts.length,
+        instagramLoaded: instagram.posts.length
+      },
       page: {
         id: page.id,
         name: page.name,
@@ -209,12 +295,18 @@ export default async function handler(req, res) {
       },
       instagramProfile: instagram.profile,
       totals,
+      platformTotals,
+      contentTypes,
       posts
     });
   } catch (error) {
     return send(res, error.statusCode || 500, {
       error: error.message,
-      meta: error.meta ? { code: error.meta.code, type: error.meta.type, error_subcode: error.meta.error_subcode } : undefined
+      meta: error.meta ? {
+        code: error.meta.code,
+        type: error.meta.type,
+        error_subcode: error.meta.error_subcode
+      } : undefined
     });
   }
 }
