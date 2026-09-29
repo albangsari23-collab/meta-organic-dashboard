@@ -1,0 +1,13 @@
+{
+  "name": "meta-organic-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node --check api/accounts.js && node --check api/sync.js && node --check api/health.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
