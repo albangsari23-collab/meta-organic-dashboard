@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meta Neon Creative Lab</title>
+<title>Meta Organic Analytics</title>
 <style>
 :root{
   --bg:#050711;--bg2:#090d1a;--panel:rgba(13,18,35,.78);--panel2:rgba(17,24,45,.72);
@@ -517,12 +517,265 @@ a{color:#69e6ff !important}
   background:var(--neon-green) !important;
   box-shadow:0 0 0 5px rgba(44,255,5,.10),0 0 18px rgba(44,255,5,.72) !important;
 }
+</style>
+<style id="editorial-performance-theme">
+:root{
+  --canvas:#F3F0EA;
+  --paper:#FCFBF7;
+  --paper-2:#F8F5EF;
+  --ink:#171A21;
+  --ink-2:#2D3440;
+  --muted:#74766F;
+  --line:#DED9D0;
+  --line-soft:#E9E5DE;
+  --navy:#26364A;
+  --teal:#5E7E79;
+  --terracotta:#A86F5B;
+  --sand:#C7AE86;
+  --success:#3F7457;
+}
+
+/* remove the neon visual layer */
+body:before,body:after,.hero:before,.hero:after{display:none!important}
+
+body{
+  background:var(--canvas)!important;
+  color:var(--ink)!important;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  letter-spacing:0!important;
+}
+.shell{max-width:1580px!important;padding:30px 34px 52px!important}
+
+/* professional report header */
+.hero{
+  min-height:auto!important;
+  display:block!important;
+  background:var(--paper)!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  padding:26px 28px!important;
+  color:var(--ink)!important;
+  box-shadow:0 10px 30px rgba(28,33,40,.055)!important;
+}
+.brand{align-items:center!important}
+.brand-left{gap:15px!important}
+.mark{
+  width:46px!important;height:46px!important;border-radius:10px!important;
+  background:var(--navy)!important;color:#fff!important;
+  box-shadow:none!important;font-size:12px!important;font-weight:900!important;
+  letter-spacing:.08em!important;
+}
+.eyebrow{
+  color:var(--teal)!important;
+  font-size:10px!important;
+  font-weight:850!important;
+  letter-spacing:.15em!important;
+  text-shadow:none!important;
+}
+.hero h1{
+  color:var(--ink)!important;
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  font-size:clamp(29px,3vw,43px)!important;
+  line-height:1.08!important;
+  letter-spacing:-.045em!important;
+  margin:6px 0 8px!important;
+  font-weight:800!important;
+}
+.hero p{
+  color:#6E746F!important;
+  max-width:760px!important;
+  font-size:13.5px!important;
+  line-height:1.55!important;
+}
+.actions{gap:8px!important}
+.btn{
+  min-height:42px!important;border-radius:9px!important;padding:10px 15px!important;
+  font-size:12px!important;font-weight:800!important;box-shadow:none!important;
+  transition:.15s ease!important;
+}
+.btn:hover{transform:translateY(-1px)!important}
+.btn-primary{
+  background:var(--navy)!important;color:white!important;border:1px solid var(--navy)!important;
+}
+.btn-secondary{
+  background:#fff!important;color:var(--ink-2)!important;border:1px solid #D7D2C9!important;
+}
+.statusline{
+  color:#7B7F78!important;margin-top:17px!important;font-size:11px!important;
+}
+.dot{
+  width:7px!important;height:7px!important;background:var(--success)!important;
+  box-shadow:none!important;animation:none!important;
+}
+
+/* filter controls */
+.filterbar{
+  background:var(--paper)!important;
+  border:1px solid var(--line)!important;
+  border-radius:15px!important;
+  padding:13px!important;
+  margin-top:14px!important;
+  box-shadow:0 8px 22px rgba(28,33,40,.035)!important;
+  backdrop-filter:none!important;
+}
+.field label{
+  color:#777A74!important;font-size:9.5px!important;letter-spacing:.09em!important;
+  font-weight:800!important;
+}
+.field select,.field input,.controls input,.controls select{
+  background:#FFF!important;color:var(--ink)!important;border:1px solid #D8D4CC!important;
+  border-radius:8px!important;box-shadow:none!important;
+}
+.field select:focus,.field input:focus,.controls input:focus,.controls select:focus{
+  border-color:#8797A8!important;box-shadow:0 0 0 3px rgba(38,54,74,.07)!important;
+}
+
+/* section rhythm */
+.section-head{
+  margin:29px 2px 12px!important;padding-bottom:9px!important;
+  border-bottom:1px solid #DDD8CF!important;
+}
+.section-head h2{
+  color:var(--ink)!important;font-size:18px!important;font-weight:800!important;letter-spacing:-.025em!important;
+}
+.section-head p{color:#7A7D76!important;font-size:11.5px!important}
+.badge-note{
+  color:#566B68!important;background:#EEF3F0!important;border:1px solid #D8E4DF!important;
+  border-radius:999px!important;padding:6px 9px!important;
+}
+
+/* KPI cards */
+.kpis{gap:12px!important}
+.kpi{
+  background:var(--paper)!important;border:1px solid var(--line)!important;
+  border-radius:14px!important;box-shadow:0 8px 22px rgba(28,33,40,.035)!important;
+  min-height:118px!important;padding:17px!important;
+}
+.kpi:before{
+  display:block!important;height:3px!important;width:42px!important;left:17px!important;right:auto!important;top:0!important;
+  border-radius:0 0 4px 4px!important;box-shadow:none!important;
+  background:var(--navy)!important;
+}
+.kpi:nth-child(2):before{background:var(--teal)!important}
+.kpi:nth-child(3):before{background:var(--terracotta)!important}
+.kpi:nth-child(4):before{background:var(--success)!important}
+.kpi:nth-child(5):before{background:var(--sand)!important}
+.kpi:nth-child(6):before{background:#8A7A8E!important}
+.kpi:after{display:none!important}
+.kpi:hover{transform:none!important;box-shadow:0 10px 26px rgba(28,33,40,.055)!important}
+.klabel{color:#7B7F78!important;font-size:9.5px!important;font-weight:800!important}
+.kval{
+  color:var(--ink)!important;text-shadow:none!important;font-size:clamp(27px,2.1vw,36px)!important;
+  letter-spacing:-.04em!important;font-weight:800!important;
+}
+.kmeta{color:#898B85!important}
+
+/* cards and charts */
+.card{
+  background:var(--paper)!important;border:1px solid var(--line)!important;
+  border-radius:15px!important;box-shadow:0 10px 28px rgba(28,33,40,.04)!important;
+  backdrop-filter:none!important;
+}
+.card-title h3{color:var(--ink)!important;font-weight:800!important}
+.card-title span{color:#7D807A!important}
+canvas{
+  background:#FBFAF7!important;border:1px solid #E7E2D9!important;border-radius:10px!important;
+}
+
+/* platform split */
+.platforms{gap:10px!important}
+.platform{
+  background:#FBFAF7!important;border:1px solid #E4DFD7!important;border-radius:11px!important;
+  box-shadow:none!important;
+}
+.platform:first-child{border-left:3px solid var(--navy)!important}
+.platform:last-child{border-left:3px solid var(--terracotta)!important}
+.platform:hover{transform:none!important;box-shadow:none!important}
+.phead{color:#747A79!important}.pname{color:var(--ink)!important}
+.picon{box-shadow:none!important}
+.picon.fb{background:var(--navy)!important;color:var(--navy)!important}
+.picon.ig{background:var(--terracotta)!important;color:var(--terracotta)!important}
+.pbig{color:var(--ink)!important;font-weight:800!important}
+.psub{color:#858780!important}
+.mini{
+  background:#FFF!important;border:1px solid #EAE6DE!important;border-radius:8px!important;
+}
+.mini b{color:var(--ink)!important}.mini span{color:#858780!important}
+
+/* top content */
+.winner{
+  background:var(--paper)!important;border:1px solid var(--line)!important;
+  border-radius:14px!important;box-shadow:0 8px 22px rgba(28,33,40,.035)!important;
+}
+.winner:hover{transform:translateY(-2px)!important;box-shadow:0 12px 26px rgba(28,33,40,.055)!important}
+.wimg{height:178px!important;background:#E7E4DD!important}
+.wimg:after{background:linear-gradient(transparent 48%,rgba(23,26,33,.34))!important;height:55%!important}
+.wimg img{filter:saturate(.92) contrast(1.02)}
+.wtag{color:#737871!important;text-shadow:none!important;font-size:9.5px!important}
+.wmetric{color:var(--ink)!important;font-weight:800!important;text-shadow:none!important}
+.wcap{color:#626862!important}
+.wmeta{color:#8A8C86!important}
+
+/* format performance - no rainbow */
+.track{
+  background:#ECE8E0!important;border:0!important;height:8px!important;
+}
+.fill{box-shadow:none!important;background:var(--navy)!important}
+.mixrow:nth-child(2) .fill{background:var(--teal)!important}
+.mixrow:nth-child(3) .fill{background:var(--terracotta)!important}
+.mixrow:nth-child(4) .fill{background:var(--sand)!important}
+.mixrow:nth-child(5) .fill{background:#7D7684!important}
+.mixname{color:#4F565E!important}.mixval{color:var(--ink)!important}
+
+/* leaderboard */
+.controls input,.controls select{background:#FBFAF7!important}
+.tablewrap{
+  background:#FFF!important;border:1px solid #DFDAD1!important;border-radius:11px!important;
+}
+table{background:#FFF!important}
+th{
+  background:#F4F1EB!important;color:#6E746F!important;
+  border-bottom:1px solid #DDD8CF!important;
+  box-shadow:none!important;
+}
+td{border-bottom:1px solid #EFECE6!important;color:#2D3440!important}
+tbody tr:nth-child(even){background:#FCFBF8!important}
+tbody tr:hover{background:#F6F4EF!important}
+.thumb{border:1px solid #DDD8CF!important;background:#E9E5DE!important}
+.cap{color:var(--ink)!important;font-weight:750!important}
+.meta{color:#858982!important}
+.pill{
+  background:#F1ECE8!important;border:1px solid #E4D8D1!important;
+  color:#8A5747!important;
+}
+.plat i{box-shadow:none!important}
+.plat i.fb{background:var(--navy)!important;color:var(--navy)!important}
+.plat i.ig{background:var(--terracotta)!important;color:var(--terracotta)!important}
+a{color:#315F72!important}
+.er-good{color:var(--success)!important;text-shadow:none!important}
+.er-mid{color:#8C6B35!important}
+.er-low{color:#9A5149!important}
+.coverage{
+  background:#F7F4EE!important;border:1px dashed #D7D1C7!important;
+  color:#777B74!important;border-radius:9px!important;
+}
+.alert{background:#FFF3F0!important;border-color:#E9C9C1!important;color:#8A463E!important}
+.footer{color:#8B8D87!important}
+
+/* keep the page light and structured on smaller screens */
+@media(max-width:760px){
+  .shell{padding:14px!important}
+  .hero{padding:20px!important}
+  .brand{align-items:flex-start!important}
+}
 </style></head>
 <body>
 <main class="shell">
 <section class="hero">
   <div class="brand">
-    <div class="brand-left"><div class="mark">⚡</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Content Intelligence Studio</h1><p>A cinematic content intelligence workspace built to surface what matters fast: attention, engagement, channel strength and creative winners.</p></div></div>
+    <div class="brand-left"><div class="mark">MP</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Performance Overview</h1><p>Facebook and Instagram organic performance, presented for faster reporting and clearer content decisions.</p></div></div>
     <div class="actions"><button id="exportBtn" class="btn btn-secondary" disabled>Export CSV</button><button id="syncBtn" class="btn btn-primary" disabled>↻ Sync Meta Now</button></div>
   </div>
   <div class="statusline"><span class="dot"></span><span id="syncStatus">Connecting to Meta…</span></div>
@@ -547,16 +800,16 @@ a{color:#69e6ff !important}
   <article class="kpi"><div class="klabel">IG followers</div><div id="followers" class="kval">—</div><div class="kmeta">Current account count</div></article>
 </section>
 
-<div class="section-head"><div><h2>Channel performance</h2><p>See where organic attention and interaction are actually coming from.</p></div></div>
+<div class="section-head"><div><h2>Platform performance</h2><p>See where organic attention and interaction are actually coming from.</p></div></div>
 <section class="main-grid">
   <article class="card card-pad"><div class="card-title"><div><h3>Performance trend</h3><span>Daily media views • Facebook vs Instagram</span></div></div><canvas id="chart" width="980" height="300"></canvas></article>
   <article class="card card-pad"><div class="card-title"><div><h3>Platform split</h3><span>Current filtered view</span></div></div><div id="platforms" class="platforms"></div></article>
 </section>
 
-<div class="section-head"><div><h2>Creative winners</h2><p>The content worth studying, reusing or pushing harder.</p></div></div>
+<div class="section-head"><div><h2>Top content</h2><p>Highest-performing content in the selected reporting period.</p></div></div>
 <section id="winners" class="winners"></section>
 
-<div class="section-head"><div><h2>Content mix</h2><p>Which formats are producing the most attention.</p></div></div>
+<div class="section-head"><div><h2>Format performance</h2><p>Views generated by each content format.</p></div></div>
 <section class="card card-pad"><div id="mix" class="mix"></div></section>
 
 <div class="section-head"><div><h2>Content leaderboard</h2><p>Search, sort and inspect every loaded post.</p></div></div>
@@ -570,7 +823,7 @@ a{color:#69e6ff !important}
   <div id="coverage" class="coverage"><span>Data coverage will appear after sync.</span><span>V2</span></div>
 </section>
 
-<div class="footer">Production • Neon Creative Lab • Live Meta API data</div>
+<div class="footer">Production • Organic Analytics • Live Meta API data</div>
 </main>
 
 <script>
@@ -678,12 +931,12 @@ function renderRows(arr){
 function renderChart(arr){
   const c=$("chart"),ctx=c.getContext("2d"),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
   const grouped={};arr.forEach(p=>{const d=(p.createdAt||"").slice(0,10);if(!d)return;if(!grouped[d])grouped[d]={facebook:0,instagram:0};grouped[d][p.platform]+=+p.views||0});
-  const data=Object.keys(grouped).sort().map(d=>({d,...grouped[d]}));if(!data.length){ctx.fillStyle="#98a2b3";ctx.font="13px system-ui";ctx.fillText("No trend data for the selected filters.",28,42);return}
+  const data=Object.keys(grouped).sort().map(d=>({d,...grouped[d]}));if(!data.length){ctx.fillStyle="#7A746B";ctx.font="13px system-ui";ctx.fillText("No trend data for the selected filters.",28,42);return}
   const max=Math.max(...data.map(x=>x.facebook+x.instagram),1),padL=48,padB=42,padT=26,plotH=H-padB-padT,step=(W-padL-18)/data.length,bw=Math.min(25,step*.58);
-  ctx.strokeStyle="#e7ebf0";ctx.fillStyle="#98a2b3";ctx.font="10px system-ui";
+  ctx.strokeStyle="#E2DED6";ctx.fillStyle="#7A746B";ctx.font="10px system-ui";
   for(let i=0;i<=4;i++){const y=padT+plotH*(i/4);ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(W-14,y);ctx.stroke();ctx.fillText(fmt(max*(1-i/4)),3,y+3)}
-  data.forEach((x,i)=>{const xx=padL+i*step+step*.18,fbh=plotH*(x.facebook/max),igh=plotH*(x.instagram/max);ctx.fillStyle="#1877f2";ctx.fillRect(xx,padT+plotH-fbh,bw,fbh);ctx.fillStyle="#c13584";ctx.fillRect(xx,padT+plotH-fbh-igh,bw,igh);if(data.length<=10||i%Math.ceil(data.length/7)===0){ctx.fillStyle="#667085";ctx.fillText(new Date(x.d+"T00:00:00").toLocaleDateString("en-MY",{day:"numeric",month:"short"}),xx,H-15)}});
-  ctx.fillStyle="#1877f2";ctx.fillRect(W-170,8,10,10);ctx.fillStyle="#475467";ctx.fillText("Facebook",W-154,17);ctx.fillStyle="#c13584";ctx.fillRect(W-90,8,10,10);ctx.fillStyle="#475467";ctx.fillText("Instagram",W-74,17);
+  data.forEach((x,i)=>{const xx=padL+i*step+step*.18,fbh=plotH*(x.facebook/max),igh=plotH*(x.instagram/max);ctx.fillStyle="#26364A";ctx.fillRect(xx,padT+plotH-fbh,bw,fbh);ctx.fillStyle="#A86F5B";ctx.fillRect(xx,padT+plotH-fbh-igh,bw,igh);if(data.length<=10||i%Math.ceil(data.length/7)===0){ctx.fillStyle="#7A746B";ctx.fillText(new Date(x.d+"T00:00:00").toLocaleDateString("en-MY",{day:"numeric",month:"short"}),xx,H-15)}});
+  ctx.fillStyle="#26364A";ctx.fillRect(W-170,8,10,10);ctx.fillStyle="#5C6470";ctx.fillText("Facebook",W-154,17);ctx.fillStyle="#A86F5B";ctx.fillRect(W-90,8,10,10);ctx.fillStyle="#5C6470";ctx.fillText("Instagram",W-74,17);
 }
 
 function exportCsv(){
