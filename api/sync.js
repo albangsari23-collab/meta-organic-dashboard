@@ -1,9 +1,11 @@
 import {
+  getConfiguredPage,
+  getSystemUserToken,
+  getUserToken,
   graph,
   metricValue,
   normalizeDate,
   pMapLimit,
-  requireToken,
   safeInt,
   send
 } from './_meta.js';
@@ -13,23 +15,75 @@ const CONTENT_LIMIT = Math.min(
   120
 );
 
-async function getPageContext(userToken, pageId) {
-  const result = await graph('me/accounts', userToken, {
-    fields: 'name,id,tasks,instagram_business_account,access_token',
-    limit: 100
-  });
-  const page = (result.data || []).find((item) => String(item.id) === String(pageId));
-  if (!page) {
-    const error = new Error('Selected Facebook Page is not available to this token.');
-    error.statusCode = 404;
-    throw error;
+function uniqueTokens(...tokens) {
+  return [...new Set(tokens.filter(Boolean))];
+}
+
+async function graphWithFallback(path, tokens, params = {}) {
+  let lastError;
+  for (const token of uniqueTokens(...tokens)) {
+    try {
+      return await graph(path, token, params);
+    } catch (error) {
+      lastError = error;
+    }
   }
-  if (!page.access_token) {
-    const error = new Error('Meta did not return a Page access token for this Page.');
-    error.statusCode = 403;
-    throw error;
+  if (lastError) throw lastError;
+  const error = new Error('No usable Meta credential is available for this request.');
+  error.statusCode = 401;
+  throw error;
+}
+
+async function getPageContext(userToken, systemToken, pageId) {
+  const configured = getConfiguredPage(pageId);
+  if (configured) {
+    try {
+      const remote = await graph(pageId, configured.access_token, {
+        fields: 'id,name,instagram_business_account'
+      });
+      return {
+        ...configured,
+        ...remote,
+        access_token: configured.access_token,
+        auth_mode: 'page_access_token'
+      };
+    } catch (_) {
+      // Continue to System User / User token fallbacks.
+    }
   }
-  return page;
+
+  if (systemToken) {
+    try {
+      const page = await graph(pageId, systemToken, {
+        fields: 'id,name,instagram_business_account'
+      });
+      return {
+        ...page,
+        access_token: systemToken,
+        tasks: [],
+        auth_mode: 'system_user'
+      };
+    } catch (_) {
+      // Continue to User token fallback.
+    }
+  }
+
+  if (userToken) {
+    const result = await graph('me/accounts', userToken, {
+      fields: 'name,id,tasks,instagram_business_account,access_token',
+      limit: 100
+    });
+    const page = (result.data || []).find((item) => String(item.id) === String(pageId));
+    if (page?.access_token) {
+      return { ...page, auth_mode: 'user' };
+    }
+  }
+
+  const error = new Error(
+    'Selected Facebook Page has no usable credential. Configure a permanent Page token or System User token, or reconnect the User token.'
+  );
+  error.statusCode = 401;
+  throw error;
 }
 
 async function collectPages(path, token, params, maxItems, stopWhen) {
@@ -54,6 +108,19 @@ async function collectPages(path, token, params, maxItems, stopWhen) {
   }
 
   return out.slice(0, maxItems);
+}
+
+async function collectPagesWithFallback(path, tokens, params, maxItems, stopWhen) {
+  let lastError;
+  for (const token of uniqueTokens(...tokens)) {
+    try {
+      return await collectPages(path, token, params, maxItems, stopWhen);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (lastError) throw lastError;
+  return [];
 }
 
 async function getFacebookPosts(page, since, until) {
@@ -113,7 +180,7 @@ async function getFacebookPosts(page, since, until) {
   });
 }
 
-async function getInstagramInsights(mediaId, userToken) {
+async function getInstagramInsights(mediaId, tokens) {
   const attempts = [
     'views,reach,shares,saved,total_interactions',
     'reach,shares,saved,total_interactions',
@@ -122,26 +189,28 @@ async function getInstagramInsights(mediaId, userToken) {
   ];
   for (const metric of attempts) {
     try {
-      return await graph(`${mediaId}/insights`, userToken, { metric });
+      return await graphWithFallback(`${mediaId}/insights`, tokens, { metric });
     } catch (_) {}
   }
   return { data: [] };
 }
 
-async function getInstagram(page, userToken, since, until) {
+async function getInstagram(page, userToken, systemToken, since, until) {
   const igId = page.instagram_business_account?.id;
   if (!igId) return { profile: null, posts: [] };
 
-  const profile = await graph(igId, userToken, {
+  const tokens = uniqueTokens(page.access_token, systemToken, userToken);
+
+  const profile = await graphWithFallback(igId, tokens, {
     fields: 'id,username,name,followers_count,media_count'
   });
 
   const sinceTs = since ? new Date(since + 'T00:00:00Z').getTime() : -Infinity;
   const untilTs = until ? new Date(until + 'T23:59:59.999Z').getTime() : Infinity;
 
-  const media = await collectPages(
+  const media = await collectPagesWithFallback(
     `${igId}/media`,
-    userToken,
+    tokens,
     {
       fields: 'id,caption,media_type,media_product_type,timestamp,permalink,thumbnail_url,media_url,like_count,comments_count'
     },
@@ -159,7 +228,7 @@ async function getInstagram(page, userToken, since, until) {
   });
 
   const posts = await pMapLimit(filtered, 7, async (item) => {
-    const insights = await getInstagramInsights(item.id, userToken);
+    const insights = await getInstagramInsights(item.id, tokens);
     const views = metricValue(insights.data, 'views');
     const reach = metricValue(insights.data, 'reach');
     const shares = metricValue(insights.data, 'shares');
@@ -241,17 +310,18 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return send(res, 405, { error: 'Method not allowed' });
 
   try {
-    const userToken = requireToken();
+    const userToken = getUserToken();
+    const systemToken = getSystemUserToken();
     const pageId = req.query?.pageId;
     const since = req.query?.since || '';
     const until = req.query?.until || '';
 
     if (!pageId) return send(res, 400, { error: 'pageId is required' });
 
-    const page = await getPageContext(userToken, pageId);
+    const page = await getPageContext(userToken, systemToken, pageId);
     const [facebookPosts, instagram] = await Promise.all([
       getFacebookPosts(page, since, until),
-      getInstagram(page, userToken, since, until)
+      getInstagram(page, userToken, systemToken, since, until)
     ]);
 
     const posts = [...facebookPosts, ...instagram.posts]
@@ -280,6 +350,7 @@ export default async function handler(req, res) {
     return send(res, 200, {
       syncedAt: new Date().toISOString(),
       graphVersion: process.env.META_GRAPH_VERSION || 'v26.0',
+      authMode: page.auth_mode || 'user',
       coverage: {
         perPlatformLimit: CONTENT_LIMIT,
         requestedSince: since || null,
@@ -302,6 +373,7 @@ export default async function handler(req, res) {
   } catch (error) {
     return send(res, error.statusCode || 500, {
       error: error.message,
+      reconnectRequired: error.meta?.code === 190 || error.statusCode === 401,
       meta: error.meta ? {
         code: error.meta.code,
         type: error.meta.type,
