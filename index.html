@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meta Organic Content Intelligence</title>
+<title>Meta Social Media Intelligence</title>
 <style>
 :root{
   --navy:#0b1730;--navy2:#13264d;--ink:#101828;--muted:#667085;--line:#e6eaf0;
@@ -76,12 +76,58 @@ th:first-child,td:first-child{text-align:left}
 @media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.filterbar{grid-template-columns:1fr 1fr}.main-grid{grid-template-columns:1fr}.winners{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:760px){.shell{padding:12px}.brand{align-items:flex-start;flex-direction:column}.filterbar{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.platforms{grid-template-columns:1fr}.winners{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.hero{padding:20px}.statusline{align-items:flex-start}}
 </style>
-</head>
+
+<style id="direction-c">
+:root{
+  --bg:#f8fbff;--card:#ffffff;--ink:#101320;--muted:#687286;--line:#dfe6ee;
+  --gold:#ffdd57;--gold2:#fff09a;--fb:#00b7ff;--ig:#ff3bbf;--green:#9cff2e;--orange:#ff9f1c;--red:#ff4d6d;
+  --shadow:0 12px 28px rgba(48,62,90,.10)
+}
+body{background:
+  radial-gradient(circle at 10% 8%,rgba(0,183,255,.14),transparent 18%),
+  radial-gradient(circle at 92% 5%,rgba(255,59,191,.12),transparent 19%),
+  linear-gradient(180deg,#f9fbff,#f4f7fb 60%,#fbfcff);
+  color:var(--ink)}
+.shell{max-width:1600px;padding-top:18px}
+.hero{
+  background:linear-gradient(115deg,#15182c 0%,#1d2450 48%,#142b4f 100%);
+  border-radius:28px;padding:28px 30px;box-shadow:0 18px 40px rgba(21,24,44,.18);border:0
+}
+.hero:before{content:"";position:absolute;width:160px;height:160px;border-radius:36px;background:#9cff2e;left:-65px;bottom:-85px;transform:rotate(18deg);opacity:.9}
+.hero:after{content:"";position:absolute;width:270px;height:270px;border-radius:50%;right:-75px;top:-125px;background:linear-gradient(135deg,#00b7ff,#ff3bbf);opacity:.7;filter:blur(2px)}
+.mark{background:linear-gradient(145deg,#9cff2e,#ffdd57);color:#15182c;border-radius:15px;box-shadow:0 10px 25px rgba(156,255,46,.22)}
+.eyebrow{color:#9cff2e}.hero h1{font-size:clamp(30px,3.5vw,50px);letter-spacing:-.04em}.hero p{color:#d8e0f0}
+.btn{border-radius:999px;padding:12px 18px}
+.btn-primary{background:linear-gradient(90deg,#9cff2e,#ffdd57);color:#16182b;box-shadow:0 8px 26px rgba(156,255,46,.22)}
+.btn-secondary{background:#ffffff;color:#15182c;border:0}
+.dot{background:#9cff2e;box-shadow:0 0 0 5px rgba(156,255,46,.16)}
+.filterbar{background:#fff;border:2px solid #eef1f5;border-radius:22px;padding:13px;box-shadow:var(--shadow)}
+.field label{color:#667085}.field select,.field input,.controls input,.controls select{background:#f7f9fc;border:1.5px solid #e1e6ed;color:#202536;border-radius:13px}
+.field select:focus,.field input:focus,.controls input:focus,.controls select:focus{border-color:#00b7ff;box-shadow:0 0 0 4px rgba(0,183,255,.09)}
+.section-head{margin-top:27px}.section-head h2{font-size:20px;letter-spacing:-.02em}.section-head p{color:#778196}
+.badge-note{background:#eafcff;color:#02709b;border:1px solid #bdefff}
+.kpis{gap:13px}
+.kpi{border:0;border-radius:21px;padding:18px;box-shadow:var(--shadow);transform:rotate(0deg)}
+.kpi:nth-child(1){background:#dff7ff}.kpi:nth-child(2){background:#e9f6ff}.kpi:nth-child(3){background:#ffe2f6}.kpi:nth-child(4){background:#e8ffd2}.kpi:nth-child(5){background:#eee7ff}.kpi:nth-child(6){background:#fff0fa}
+.kpi:before{display:none}.klabel{color:#5f687a}.kval{font-size:clamp(25px,2.35vw,37px);color:#121522}.kmeta{color:#727b8c}
+.card{border:0;border-radius:23px;box-shadow:var(--shadow);background:#fff}.card-pad{padding:19px}
+canvas{background:linear-gradient(180deg,#f8fbff,#ffffff);border-radius:17px}
+.platforms{gap:12px}.platform{border:0;border-radius:18px;padding:16px;box-shadow:inset 0 0 0 1px rgba(20,30,55,.06)}.platform:first-child{background:#e5f7ff}.platform:last-child{background:#ffe9f7}
+.phead{color:#657085}.pbig{color:#111827}.psub{color:#6d7587}.mini{border:0;background:rgba(255,255,255,.72);border-radius:12px}
+.winners{gap:14px}.winner{border:0;border-radius:23px;box-shadow:var(--shadow);transition:.2s transform,.2s box-shadow}.winner:hover{transform:translateY(-5px) rotate(-.3deg);box-shadow:0 18px 35px rgba(48,62,90,.16)}
+.winner:nth-child(1){background:#e7f9ff}.winner:nth-child(2){background:#ffe9f8}.winner:nth-child(3){background:#efffdc}
+.wimg{height:170px;background:#e8edf4}.wbody{padding:15px}.wtag{color:#687286}.wmetric{color:#111827}.wcap{color:#566074}.wmeta{color:#8b94a5}
+.mixrow{grid-template-columns:110px 1fr 75px}.track{height:12px;background:#edf1f5}.fill{background:linear-gradient(90deg,#00b7ff,#8a5cff,#ff3bbf,#ffdd57);box-shadow:none}.mixname{color:#1b2130}
+.controls input,.controls select{background:#f8fafc}
+.tablewrap{border:1px solid #e5eaf0;border-radius:17px}table{background:#fff}th{background:#f5f8fc;color:#687286}td{border-color:#eef1f4}tbody tr:hover{background:#fbfdff}.cap{color:#1d2332}.pill{background:#f0ebff;color:#6941c6}.plat i.fb{background:#00b7ff}.plat i.ig{background:#ff3bbf}
+a{color:#087db2}.er-good{color:#2b8a00}.er-mid{color:#c36a00}.er-low{color:#d12d4d}
+.coverage{background:#fbfcfe;border-color:#dfe5ec;color:#70798a;border-radius:15px}.footer{color:#8d95a4}
+</style></head>
 <body>
 <main class="shell">
 <section class="hero">
   <div class="brand">
-    <div class="brand-left"><div class="mark">M</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Performance Command Center</h1><p>Live Facebook + Instagram organic analytics for content decisions, client reporting and creative direction.</p></div></div>
+    <div class="brand-left"><div class="mark">✦</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Bold Social Command Center</h1><p>A bright, high-energy control room for organic content performance, creative winners and channel momentum.</p></div></div>
     <div class="actions"><button id="exportBtn" class="btn btn-secondary" disabled>Export CSV</button><button id="syncBtn" class="btn btn-primary" disabled>↻ Sync Meta Now</button></div>
   </div>
   <div class="statusline"><span class="dot"></span><span id="syncStatus">Connecting to Meta…</span></div>
@@ -129,7 +175,7 @@ th:first-child,td:first-child{text-align:left}
   <div id="coverage" class="coverage"><span>Data coverage will appear after sync.</span><span>V2</span></div>
 </section>
 
-<div class="footer">Meta Organic Content Intelligence V2 • Live API data • Historical snapshots are the next database layer.</div>
+<div class="footer">Direction C • Bold Social Media Command Center • Interface preview</div>
 </main>
 
 <script>
