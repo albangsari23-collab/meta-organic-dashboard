@@ -1007,6 +1007,62 @@ canvas{background:#FCFBF8!important}
   #exportBtn{min-width:100%!important}
   .actions{width:100%!important}
 }
+</style>
+<style id="table-navy-refinement">
+:root{
+  --table-navy:#18263D;
+  --table-navy-2:#22324A;
+  --table-head-text:#F4F7FB;
+  --table-head-muted:#B8C4D3;
+}
+
+/* Editorial table treatment: dark navy header, light readable body */
+.tablewrap{
+  background:#FFFFFF!important;
+  border:1px solid #D6DCE4!important;
+  border-radius:12px!important;
+  box-shadow:0 10px 24px rgba(24,38,61,.06)!important;
+  overflow:auto!important;
+}
+table{
+  background:#FFFFFF!important;
+}
+thead{
+  background:var(--table-navy)!important;
+}
+th{
+  background:var(--table-navy)!important;
+  color:var(--table-head-muted)!important;
+  border-bottom:1px solid rgba(255,255,255,.10)!important;
+  font-weight:850!important;
+  letter-spacing:.075em!important;
+}
+th:first-child{
+  color:var(--table-head-text)!important;
+}
+thead tr{
+  box-shadow:0 6px 14px rgba(24,38,61,.12)!important;
+}
+td{
+  color:#2D3440!important;
+  border-bottom:1px solid #ECE8E1!important;
+}
+tbody tr:nth-child(even){
+  background:#FBFAF7!important;
+}
+tbody tr:hover{
+  background:#F2F5F9!important;
+}
+.controls{
+  background:#F7F5F0!important;
+  border:1px solid #E2DDD4!important;
+  border-radius:11px!important;
+  padding:10px!important;
+}
+.controls input,.controls select{
+  background:#FFFFFF!important;
+  border-color:#D6DCE4!important;
+}
 </style></head>
 <body>
 <main class="shell">
