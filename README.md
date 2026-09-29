@@ -1,21 +1,31 @@
-# Meta Organic Content Intelligence Dashboard
+# Meta Organic Performance Dashboard
 
-Production-oriented V1 dashboard for on-demand organic Facebook + Instagram performance using Meta Graph API.
+Production dashboard for on-demand Facebook + Instagram organic performance using Meta Graph API.
 
-## What V1 includes
+## Production auth strategy
 
-- Discovers Facebook Pages available to the authenticated Meta user token.
-- Detects linked Instagram professional accounts.
-- Manual **SYNC META NOW** action pulls latest available Meta data.
-- Facebook metrics: media views, unique media viewers, reactions, comments, shares, clicks.
-- Instagram metrics: views, reach, likes, comments, shares, saves, total interactions when supported.
-- Filters: client/Page, platform, date range, content type.
-- KPI cards, publish-date performance chart, content signals, content leaderboard, thumbnails.
-- No Meta token is ever exposed to browser JavaScript.
+The dashboard supports three credential layers, in this order:
 
-## Required Meta permissions
+1. **Permanent Page access tokens** via `META_PAGE_TOKENS_JSON` — preferred when Pages are managed individually.
+2. **Meta Business System User token** via `META_SYSTEM_USER_ACCESS_TOKEN` + `META_BUSINESS_ID` — preferred when assets are assigned to one Business Portfolio.
+3. **User access token** via `META_USER_ACCESS_TOKEN` — fallback only because it expires.
 
-Use a fresh production token that has access to the Pages being monitored and includes the permissions needed by your approved use cases, including:
+This means an expired Graph API Explorer token no longer has to take the whole dashboard offline if a permanent Page or System User credential is configured.
+
+## Features
+
+- Facebook + linked Instagram professional-account analytics.
+- Manual **Sync Meta Now** action pulls the latest available Meta data.
+- Facebook: media views, unique media viewers, reactions, comments, shares, clicks.
+- Instagram: views, reach, likes, comments, shares, saves and total interactions when supported.
+- Filters: client/Page, platform, date range and content type.
+- KPI cards, platform trend, top content, format performance and searchable leaderboard.
+- CSV export.
+- Meta credentials remain server-side and are never exposed to browser JavaScript.
+
+## Required permissions
+
+The credential used for each asset must have the permissions and asset access required by the app/use case, including where applicable:
 
 - `pages_show_list`
 - `pages_read_engagement`
@@ -24,34 +34,73 @@ Use a fresh production token that has access to the Pages being monitored and in
 - `instagram_basic`
 - `instagram_manage_insights`
 
-The Instagram account must be a professional account and linked to the relevant Facebook Page for the Facebook Login-based flow used here.
+The Instagram account must be professional and linked to the relevant Facebook Page for the Facebook Login-based flow.
 
-## Environment variables
+## Vercel environment variables
 
-Create these in Vercel → Project → Settings → Environment Variables:
+Always configure credentials directly in Vercel. Never commit real tokens.
+
+### Option A — permanent Page tokens
 
 ```env
-META_USER_ACCESS_TOKEN=YOUR_FRESH_TOKEN
+META_PAGE_TOKENS_JSON=[{"pageId":"123456789","pageName":"Example Page","pageAccessToken":"YOUR_PAGE_TOKEN","instagramBusinessAccountId":"1784..."}]
 META_GRAPH_VERSION=v26.0
-META_POST_LIMIT=25
+META_POST_LIMIT=100
 ```
 
-**Important:** Do not reuse any token that was exposed in chat or screenshots. Generate a fresh token and store it directly in Vercel.
+Multiple Pages can be added to the JSON array.
 
-## Deploy on Vercel
+### Option B — System User
 
-1. Put these files in a Git repository or upload the project to Vercel.
-2. Add the environment variables above.
-3. Deploy/redeploy.
-4. Open `/api/health` to confirm the server can authenticate to Meta.
-5. Open the homepage, choose a Page, then click **SYNC META NOW**.
+```env
+META_SYSTEM_USER_ACCESS_TOKEN=YOUR_SYSTEM_USER_TOKEN
+META_BUSINESS_ID=YOUR_BUSINESS_PORTFOLIO_ID
+META_GRAPH_VERSION=v26.0
+META_POST_LIMIT=100
+```
+
+### Fallback — User token
+
+```env
+META_USER_ACCESS_TOKEN=YOUR_USER_TOKEN
+META_GRAPH_VERSION=v26.0
+META_POST_LIMIT=100
+```
+
+A User token is useful for testing but should not be the only production credential because it expires.
+
+## Health check
+
+Open:
+
+```
+/api/health
+```
+
+A healthy response includes:
+
+```json
+{
+  "ok": true,
+  "authenticated": true,
+  "authMode": "page_access_token"
+}
+```
+
+Possible `authMode` values are `page_access_token`, `system_user`, or `user`.
 
 ## API endpoints
 
-- `GET /api/health` – validates server-side Meta authentication.
-- `GET /api/accounts` – lists available Pages without exposing Page access tokens.
-- `GET /api/sync?pageId=...&since=YYYY-MM-DD&until=YYYY-MM-DD` – pulls and normalizes current organic performance.
+- `GET /api/health` — validates the best available server-side Meta credential.
+- `GET /api/accounts` — lists usable Pages without exposing tokens.
+- `GET /api/sync?pageId=...&since=YYYY-MM-DD&until=YYYY-MM-DD` — pulls and normalizes current organic performance.
 
-## V1 limitation / Phase 2
+## Security
 
-V1 is live-on-demand and does not persist historical snapshots. Phase 2 should add a database (e.g. Postgres/Supabase/Neon) and a scheduled sync so the dashboard can calculate follower growth, 1h/6h/24h content velocity, historical trend snapshots, and organic-to-paid relationships.
+- Never put a real Meta token in GitHub, client-side JavaScript, screenshots or chat.
+- Store all production credentials as Vercel Environment Variables.
+- Page and System User tokens can still be invalidated by permission changes, asset removal, app revocation or security events, so `/api/health` should remain part of operational monitoring.
+
+## Next data layer
+
+The dashboard is currently live-on-demand. A later database layer can store scheduled historical snapshots for follower growth, 1h/6h/24h content velocity, monthly comparisons and organic-to-paid analysis.
