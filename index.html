@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meta Organic Content Intelligence</title>
+<title>Meta Executive Content Intelligence</title>
 <style>
 :root{
   --navy:#0b1730;--navy2:#13264d;--ink:#101828;--muted:#667085;--line:#e6eaf0;
@@ -76,12 +76,42 @@ th:first-child,td:first-child{text-align:left}
 @media(max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.filterbar{grid-template-columns:1fr 1fr}.main-grid{grid-template-columns:1fr}.winners{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:760px){.shell{padding:12px}.brand{align-items:flex-start;flex-direction:column}.filterbar{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.platforms{grid-template-columns:1fr}.winners{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.hero{padding:20px}.statusline{align-items:flex-start}}
 </style>
-</head>
+
+<style id="direction-b">
+:root{--bg:#07080b;--card:#101217;--ink:#f6f3ec;--muted:#98989f;--line:#252831;--gold:#d9b66c;--gold2:#f2d99e;--fb:#38c8ff;--ig:#ff55c8;--green:#7cffb2;--shadow:0 18px 60px rgba(0,0,0,.34)}
+body{background:radial-gradient(circle at 85% 0,rgba(56,200,255,.06),transparent 24%),radial-gradient(circle at 10% 16%,rgba(255,85,200,.045),transparent 22%),linear-gradient(180deg,#07080b,#0b0d12 55%,#07080b);color:var(--ink)}
+.shell{max-width:1540px;padding-top:28px}
+.hero{background:linear-gradient(125deg,#0b0d12 0%,#11151d 58%,#17110c 100%);border:1px solid #2a2d34;border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.42)}
+.hero:after{width:500px;height:500px;right:-210px;top:-320px;background:radial-gradient(circle,rgba(217,182,108,.18),transparent 63%)}
+.mark{background:linear-gradient(145deg,#f0dfb6,#b88b3d);color:#0b0d12;border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 10px 28px rgba(217,182,108,.16)}
+.eyebrow{color:#cbbd9c;letter-spacing:.21em}
+.hero h1,.section-head h2{font-family:Georgia,"Times New Roman",serif;font-weight:600;letter-spacing:-.015em}
+.hero h1{font-size:clamp(30px,3.2vw,47px)}
+.hero p{color:#aeb3bd}
+.btn{border-radius:9px}
+.btn-primary{background:linear-gradient(135deg,#f0daa0,#b98e43);color:#0d0f13;box-shadow:0 8px 28px rgba(217,182,108,.15)}
+.btn-secondary{background:#11141a;color:#dbe7ed;border:1px solid #2b313b}
+.dot{background:#69f7bf;box-shadow:0 0 14px rgba(105,247,191,.45)}
+.filterbar,.card,.kpi,.winner{background:linear-gradient(180deg,rgba(17,19,25,.96),rgba(12,14,19,.96));border-color:#262a32;box-shadow:0 14px 42px rgba(0,0,0,.24)}
+.filterbar{border-radius:14px}
+.field label{color:#828a96}.field select,.field input,.controls input,.controls select{background:#0c0f14;color:#f2f1ee;border-color:#282c34;border-radius:8px}
+.field select:focus,.field input:focus,.controls input:focus,.controls select:focus{border-color:#3ac5ef;box-shadow:0 0 0 3px rgba(58,197,239,.07)}
+.section-head{margin-top:30px}.section-head h2{font-size:21px;color:#f0eadf}.section-head p,.card-title span{color:#858b96}
+.badge-note{background:#141920;color:#9edff2;border:1px solid #26353e}
+.kpi{border-radius:13px;padding:18px}.kpi:before{width:100%;height:1px;bottom:auto;background:linear-gradient(90deg,transparent,#b98e43,transparent)}.kpi.feature:before{background:linear-gradient(90deg,transparent,#f0d691,transparent)}
+.klabel{color:#7d8590}.kval{font-family:Georgia,"Times New Roman",serif;color:#f4efe6;font-weight:700}.kmeta{color:#777f8a}
+.card{border-radius:15px}.platform{background:#0c0f14;border-color:#242932;border-radius:11px}.mini{background:#10141a;border-color:#20252d}.pbig{font-family:Georgia,"Times New Roman",serif}
+.winner{border-radius:14px}.winner:nth-child(1){border-top:2px solid #38c8ff}.winner:nth-child(2){border-top:2px solid #ff55c8}.winner:nth-child(3){border-top:2px solid #7cffb2}.wtag{color:#a6adb8}.wmetric{font-family:Georgia,"Times New Roman",serif;color:#f4efe6}.wcap{color:#a0a6af}.wimg{background:#131720}
+.track{background:#171a20}.fill{background:linear-gradient(90deg,#b98e43,#38c8ff,#ff55c8)}
+.tablewrap{border-color:#252a32}.tablewrap table{background:#0e1116}th{background:#11151b;color:#7c8591}td{border-color:#1f242c}.cap{color:#eae8e3}.pill{background:#191d25;color:#b8bec8}
+a{color:#5dd7ff}.coverage{background:#0d1116;border-color:#2a3038;color:#7e8793}
+.footer{color:#656c76}
+</style></head>
 <body>
 <main class="shell">
 <section class="hero">
   <div class="brand">
-    <div class="brand-left"><div class="mark">M</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Performance Command Center</h1><p>Live Facebook + Instagram organic analytics for content decisions, client reporting and creative direction.</p></div></div>
+    <div class="brand-left"><div class="mark">◆</div><div><div class="eyebrow">Organic Content Intelligence</div><h1>Luxury Performance Atelier</h1><p>A refined executive view of organic performance, creative quality and channel momentum.</p></div></div>
     <div class="actions"><button id="exportBtn" class="btn btn-secondary" disabled>Export CSV</button><button id="syncBtn" class="btn btn-primary" disabled>↻ Sync Meta Now</button></div>
   </div>
   <div class="statusline"><span class="dot"></span><span id="syncStatus">Connecting to Meta…</span></div>
@@ -129,7 +159,7 @@ th:first-child,td:first-child{text-align:left}
   <div id="coverage" class="coverage"><span>Data coverage will appear after sync.</span><span>V2</span></div>
 </section>
 
-<div class="footer">Meta Organic Content Intelligence V2 • Live API data • Historical snapshots are the next database layer.</div>
+<div class="footer">Direction B • Luxury Neon Executive • Interface preview</div>
 </main>
 
 <script>
